@@ -38,8 +38,8 @@ set(LONG_DESCRIPTION "GPS/GNSS controlled Dashboard based Odometer plugin for Op
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "7")
 set(VERSION_PATCH "0")
-set(VERSION_TWEAK "0")
-set(VERSION_DATE "14/04/2023")  # DD/MM/YYYY format
+set(VERSION_TWEAK "1")
+set(VERSION_DATE "18/04/2023")  # DD/MM/YYYY format
 set(OCPN_MIN_VERSION "ov58")
 set(OCPN_API_VERSION_MAJOR "1")
 set(OCPN_API_VERSION_MINOR "18")
@@ -184,7 +184,7 @@ set(OCPNSRC
 
 set(OCPNHDRS
     ocpninclude/cutil.h
-    ocpninclude/ocpn_plugin.h
+#    ocpninclude/ocpn_plugin.h
     ocpninclude/pluginmanager.h
     ocpninclude/shaders.h
     ocpninclude/TexFont.h
@@ -225,6 +225,7 @@ set(EXTINCLUDE_DIR ${EXTINCLUDE_DIR} extinclude libs/ocpn-api/)
 ##
 
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
+## INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include/N2KParser)
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/ocpninclude)
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/${EXTINCLUDE_DIR})
 include_directories(BEFORE ${PROJECT_SOURCE_DIR}/libs/)
