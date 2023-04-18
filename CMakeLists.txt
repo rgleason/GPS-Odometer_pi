@@ -1,9 +1,9 @@
 # ---------------------------------------------------------------------------
 # Author: LennartG 
-# Copyright:   2018 - 2023
+# Copyright:   2018
 # License:     GPL v3+
 # ---------------------------------------------------------------------------
-# Frontend2  v1.0.230   Author: Dave Register 
+# TP Frontend2  v1.0.230   Author: Jon Gough  05/03/2023") # DD/MM/YYYY format
 # ---------------------------------------------------------------------------
 ## ----- When changing this file do NOT change the order in which sections occur        ----- ##
 ## ----- Changes should only be made between the section blocks that identify where     ----- ##
@@ -21,6 +21,8 @@ if(COMMAND cmake_policy)
         cmake_policy(SET CMP0043 NEW)
     endif(POLICY CMP0043)
     cmake_policy(SET CMP0048 NEW)
+# Need cmake 3.13 to implement this, but raspbian builds are at 3.7.2 and bionic at 3.10 and xenial builds at 3.5.1
+#    cmake_policy(SET CMP0076 NEW)
     if(POLICY CMP0077)
         cmake_policy(SET CMP0077 NEW)
     endif(POLICY CMP0077)
@@ -33,16 +35,16 @@ set(TITLE_NAME "GPSODOMETER")
 set(PACKAGE_CONTACT "LennartG")
 set(PACKAGE "gpsodometer")
 set(SHORT_DESCRIPTION "GPS Odometer plugin for OpenCPN")
-set(LONG_DESCRIPTION "GPS/GNSS controlled Dashboard based Odometer plugin for OpenCPN, displays GPS/GNSS calculated Log and Trip information")
+set(LONG_DESCRIPTION "GPS controlled Dashboard based Odometer plugin for OpenCPN, displays GPS calculated Log and Trip information")
 
 set(VERSION_MAJOR "0")
-set(VERSION_MINOR "7")
-set(VERSION_PATCH "0")
-set(VERSION_TWEAK "1")
-set(VERSION_DATE "18/04/2023")  # DD/MM/YYYY format
-set(OCPN_MIN_VERSION "ov58")
+set(VERSION_MINOR "6")
+set(VERSION_PATCH "6")
+set(VERSION_TWEAK "8")
+set(VERSION_DATE "14/04/2023")  # DD/MM/YYYY format
+set(OCPN_MIN_VERSION "ov571")
 set(OCPN_API_VERSION_MAJOR "1")
-set(OCPN_API_VERSION_MINOR "18")
+set(OCPN_API_VERSION_MINOR "16")
 
 set(PARENT "opencpn")
 
@@ -55,12 +57,11 @@ set(PROD "prod")    #Standard Repos
 set(BETA "beta")    #Standard Repos
 set(ALPHA "alpha")  #Standard Repos
 
-# Set if your Cloudsmith Base Repository name does not match your Git Repository name.
+# Set if yourCloudsmith Base Repository name does not match your Git Repository name.
 set (CLOUDSMITH_BASE_REPOSITORY "gps-odometer")  #without the pi
 # Match the cloudsmith org name, not the user.
 set(CLOUDSMITH_USER "opencpn") 
 #set(CLOUDSMITH_USER "LennartG-Sve")
-
 # set(XML_INFO_URL "https://opencpn.org/wiki/dokuwiki/doku.php?id=opencpn:opencpn_user_manual:plugins:other:odometer") 
 set(XML_INFO_URL "https://opencpn-manuals.github.io/plugins/gps-odometer/0.1/index.html")
 set(XML_SUMMARY ${SHORT_DESCRIPTION})
@@ -72,36 +73,33 @@ set(XML_DESCRIPTION ${LONG_DESCRIPTION})
 
 ##
 ## ----- Modify section below if there are special requirements for the plugin ----- ##
-##
-
 ## GPS Odometer uses SVG graphics for the toolbar icons
 option(PLUGIN_USE_SVG "Use SVG graphics" ON)
 
 set(CMAKE_CXX_STANDARD 11)
 
-# Use local version of GLU library
-# requires libs/glu directory
-set(USE_LOCAL_GLU TRUE)
 # Prefer libGL.so to libOpenGL.so, see CMP0072
 set(OpenGL_GL_PREFERENCE "LEGACY")
-
-# No need to use OpenGL for GPS-Odometer
+# Don't use local version of GLU library
+set(USE_LOCAL_GLU FALSE)
 option(USE_GL "Enable OpenGL support" OFF)
 message(STATUS "${CMLOC}USE_GL: ${USE_GL}")
 
+# Define the build type
 if("${CMAKE_BUILD_TYPE}" STREQUAL "")
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build" FORCE)
+    set(CMAKE_BUILD_TYPE
+        "Release"
+        CACHE STRING "Choose the type of build" FORCE)
 endif("${CMAKE_BUILD_TYPE}" STREQUAL "")
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "" "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
 message(STATUS "${CMLOC}Build type: ${CMAKE_BUILD_TYPE}")
 
-##
 ## ----- The statements below are used to setup standard variables that are required by the 
 ##       CMAKE process - do not remove ----- ##
 
 project(${PACKAGE})
 
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake;")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 include("PluginSetup")
 
@@ -131,10 +129,7 @@ include("PluginConfigure")
 ## ----- do not change section above - needed to configure build process ----- ##
 ##
 
-#
-# ----- Change below to match project requirements for source, headers, etc. ----- ##
-#
-
+## ----- Change below to match project requirements for source, headers, etc. ----- ##
 ## add_definitions(-DUSE_S57)
 
 SET(SRCS
@@ -162,79 +157,32 @@ SET(SRCS
 
 SET(HDRS
     include/button.h
-    include/dial.h
-    include/icons.h
-    include/iirfilter.h
-    include/instrument.h
-    include/odometer_pi.h
-    include/speedometer.h
-    include/nmea0183.h
-    include/nmea0183.hpp
-    include/SatInfo.h
+	include/dial.h
+	include/icons.h
+	include/iirfilter.h
+	include/instrument.h
+	include/odometer_pi.h
+	include/speedometer.h
+	include/nmea0183.h
+	include/SatInfo.h
     include/wx/json_defs.h
     include/wx/jsonreader.h
     include/wx/jsonval.h
     include/wx/jsonwriter.h
 )	
 
-set(OCPNSRC
-    ocpnsrc/cutil.cpp
-    ocpnsrc/TexFont.cpp
-)
-
-set(OCPNHDRS
-    ocpninclude/cutil.h
-#    ocpninclude/ocpn_plugin.h
-    ocpninclude/pluginmanager.h
-    ocpninclude/shaders.h
-    ocpninclude/TexFont.h
-    ocpninclude/vector2D.h
-    libs/ocpn-api/ocpn_plugin.h
-)
-
-set(EXTINCLUDE
-    extinclude/ODAPI.h
-    extinclude/ODJSONSchemas.h
-)
-
-set(LIBSSRC
-   libs/wxJSON/src/jsonreader.cpp
-   libs/wxJSON/src/jsonval.cpp 
-   libs/wxJSON/src/jsonwriter.cpp
-)
-
-
-set(LIBHDRS
-    libs/GL/gl.h
-    libs/GL/gl_private.h
-    libs/GL/glext.h
-    libs/GL/glu.h
-    libs/wxJSON/include/json_defs.h
-    libs/wxJSON/include/jsonreader.h
-    libs/wxJSON/include/jsonval.h
-    libs/wxJSON/include/jsonwriter.h
-)
-
 ## GPS Odometer plugin uses SVG for toolbar icons
 add_definitions(-DPLUGIN_USE_SVG)
 
-set(EXTINCLUDE_DIR ${EXTINCLUDE_DIR} extinclude libs/ocpn-api/)
-
-##
-## ----- JSON validation is not used, section skipped ----- ##
-##
-
-INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
-## INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include/N2KParser)
-INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/ocpninclude)
-include_directories(BEFORE ${PROJECT_SOURCE_DIR}/${EXTINCLUDE_DIR})
-include_directories(BEFORE ${PROJECT_SOURCE_DIR}/libs/)
-include_directories(BEFORE ${PROJECT_SOURCE_DIR}/libs/GL)
-include_directories(BEFORE ${PROJECT_SOURCE_DIR}/libs/ocpn-api)
-include_directories(BEFORE ${PROJECT_SOURCE_DIR}/libs/wxJSON/include)
-
+## Need ocpn-api for ocpn_plugin.h
 ##INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/api-16)
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
+INCLUDE_DIRECTORIES(BEFORE ${CMAKE_SOURCE_DIR}/include)
+
+include_directories(BEFORE ${PROJECT_SOURCE_DIR}/libs/)
+
+include_directories(BEFORE ${PROJECT_SOURCE_DIR}/libs/ocpn-api)
+
 
 #
 # ----- Change below to match project requirements for android build ----- ##
@@ -247,9 +195,9 @@ endif(QT_ANDROID)
 ##
 ## ----- Change above to match project requirements for android build ----- ##
 ##
+## Statement below is required to collect all the set (headers and SRCS) - Adjust as required
 
-## target_sources(${PACKAGE_NAME} PUBLIC ${SRCS} ${HDRS} ${OCPNSRC} ${EXTSRC} ${LIBSSRC})
-target_sources(${PACKAGE_NAME} PUBLIC ${SRCS} ${HDRS} ${OCPNSRC} ${EXTSRC} ${LIBHDRS})
+target_sources(${PACKAGE_NAME} PUBLIC ${SRCS} ${HDRS})
 
 if(NOT OCPN_FLATPAK_CONFIG)
     # Build environment not available when flatpak is being configured so following statements will not work
@@ -262,11 +210,13 @@ endif(NOT OCPN_FLATPAK_CONFIG)
 
 add_definitions(-DTIXML_USE_STL)
 
+## ----- Do not change next section - needed to configure build process ----- ##
+# Not using JSON validation
+
 
 ##
-## ----- JSON validation is not used, section skipped ----- ##
+## ----- Change above to match project requirements ----- ##
 ##
-
 
 ##
 ## ----- do not change next section - needed to configure build process ----- ##
@@ -282,9 +232,8 @@ include("PluginInstall")
 include("PluginLocalization")
 include("PluginPackage")
 
-##
 ## ----- do not change section above - needed to configure build process ----- ##
-##
+
 message(STATUS "${CMLOC}include directories: ")
 get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
 foreach(dir ${dirs})
