@@ -395,6 +395,15 @@ int odometer_pi::GetPlugInVersionMinor() {
     return PLUGIN_VERSION_MINOR;
 }
 
+int aisradar_pi::GetPlugInVersionPatch() {
+    return PLUGIN_VERSION_PATCH;
+}
+
+int aisradar_pi::GetPlugInVersionPost() {
+    return PLUGIN_VERSION_TWEAK;
+}
+
+
 wxString odometer_pi::GetCommonName() {
     return _T(PLUGIN_COMMON_NAME);
 }

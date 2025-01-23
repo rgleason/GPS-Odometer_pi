@@ -47,7 +47,6 @@ endif (COMMAND cmake_policy)
 
 
 
-
 # define plugin name, owner and versions
 set(VERBOSE_NAME "GPS_Odometer")
 set(COMMON_NAME "GPS Odometer")
@@ -63,8 +62,8 @@ set(LONG_DESCRIPTION
 
 set(VERSION_MAJOR "0")
 set(VERSION_MINOR "8")
-set(VERSION_PATCH "5")
-set(VERSION_TWEAK "6")
+set(VERSION_PATCH "6")
+set(VERSION_TWEAK "0")
 set(VERSION_DATE "23/01/2025")  # DD/MM/YYYY format
 set(OCPN_MIN_VERSION "ov58")
 
@@ -84,13 +83,13 @@ set(BETA "beta")   #Standard Repos
 set(ALPHA "alpha") #Standard Repos
 
 # Set if  Cloudsmith Base Repository name does not match your Git Repository name.
-#set(CLOUDSMITH_BASE_REPOSITORY "${GIT_REPOSITORY_NAME}")
-#set(CLOUDSMITH_BASE_REPOSITORY "opencpn-plugins")  #Ricks's customization
+#set (CLOUDSMITH_BASE_REPOSITORY "${GIT_REPOSITORY_NAME}")
+#set (CLOUDSMITH_BASE_REPOSITORY "opencpn-plugins")  #Ricks's customization
 set (CLOUDSMITH_BASE_REPOSITORY "gps-odometer") # without the pi
 
 # Set the following to use OpenCPN cloudsmith repositories instead of own repositories
 set(CLOUDSMITH_USER "opencpn")
-#set(CLOUDSMITH_USER "LennartG-Sve")
+#set (CLOUDSMITH_USER "LennartG-Sve")
 
 set(XML_INFO_URL
 	"https://opencpn-manuals.github.io/main/gps-odometer/index.html"
@@ -180,6 +179,7 @@ SET(SRCS
     src/long.cpp
     src/gga.cpp
     src/rmc.cpp
+    libs/N2KParser/src/N2kMessages.cpp
     libs/N2KParser/src/N2kMsg.cpp
     libs/N2KParser/src/N2KParser.cpp
 )
@@ -198,10 +198,6 @@ SET(HDRS
 )	
 
 set(LIBHDRS
-    libs/GL/gl.h
-    libs/GL/gl_private.h
-    libs/GL/glext.h
-    libs/GL/glu.h
     libs/N2KParser/include/N2kDef.h
     libs/N2KParser/include/N2kMessages.h
     libs/N2KParser/include/N2kMsg.h
@@ -229,22 +225,18 @@ add_definitions(-DPLUGIN_USE_SVG)
 ## This add_library  can be used in conditionals below.
 ##=============================================================
 
-set(SRC ${SRCS} ${HDRS} )
+set(SRC ${SRCS} ${HDRS} ${LIBHDRS} )
 
 ##=============================================================
 ## Modify/configure 'Include' Directories below for the Plugin
 ##=============================================================
 
-INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/include)
-include_directories(BEFORE ${PROJECT_SOURCE_DIR}/libs/GL)
-INCLUDE_DIRECTORIES(BEFORE ${PROJECT_SOURCE_DIR}/src)
-
+include_directories(BEFORE ${PROJECT_SOURCE_DIR}/include)
 
 ## Change target_sources to match your project needs.
 ##==============================================================
 
-#vtarget_sources(${PACKAGE_NAME} PUBLIC ${SRC} )
-target_sources(${PACKAGE_NAME} PUBLIC ${SRCS} ${HDRS} ${LIBHDRS})
+target_sources(${PACKAGE_NAME} PUBLIC ${SRC} )
 
 ## Change target_sources to match your project needs.
 ##==============================================================
@@ -268,8 +260,8 @@ if (NOT OCPN_FLATPAK_CONFIG)
   add_subdirectory(opencpn-libs/wxJSON)
   target_link_libraries(${PACKAGE_NAME} ocpn::wxjson)
 
-##  add_subdirectory(opencpn-libs/plugin_dc)
-##  target_link_libraries(${PACKAGE_NAME} ocpn::plugin-dc)
+  add_subdirectory(opencpn-libs/plugin_dc)
+  target_link_libraries(${PACKAGE_NAME} ocpn::plugin-dc)
 
 endif (NOT OCPN_FLATPAK_CONFIG)
 

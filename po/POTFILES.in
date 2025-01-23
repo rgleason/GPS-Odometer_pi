@@ -16,6 +16,7 @@ src/latlong.cpp
 src/long.cpp
 src/gga.cpp
 src/rmc.cpp
+libs/N2KParser/src/N2kMessages.cpp
 libs/N2KParser/src/N2kMsg.cpp
 libs/N2KParser/src/N2KParser.cpp
 include/button.h
