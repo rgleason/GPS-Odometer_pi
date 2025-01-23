@@ -395,11 +395,11 @@ int odometer_pi::GetPlugInVersionMinor() {
     return PLUGIN_VERSION_MINOR;
 }
 
-int odometer_pi:::GetPlugInVersionPatch() {
+int odometer_pi::GetPlugInVersionPatch() {
     return PLUGIN_VERSION_PATCH;
 }
 
-int odometer_pi:::GetPlugInVersionPost() {
+int odometer_pi::GetPlugInVersionPost() {
     return PLUGIN_VERSION_TWEAK;
 }
 
